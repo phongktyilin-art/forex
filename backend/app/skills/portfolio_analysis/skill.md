@@ -1,12 +1,31 @@
 # Portfolio Analysis Skill
 
-Lightweight portfolio analysis skill. Provides exposure, correlation, diversification and concentration analysis stubs for integration and testing.
+Purpose
+
+Robot tối ưu:
+
+```text
+Portfolio
+↓
+Risk
+↓
+Capital Protection
+```
+
+không phải:
+
+```text
+Trade
+↓
+Risk
+```
 
 Responsibilities:
 
 - exposure analysis
 - correlation analysis
 - diversification analysis
-- concentration analysis
+- concentration risk assessment
+- margin and capital protection guidance
 
-Examples in `examples/` show JSON inputs. This is a stub implementation — replace analysis methods with real finance computations when available.
+This skill evaluates portfolio health, detects overlapping exposures, and classifies risk to support long-horizon portfolio decisioning.

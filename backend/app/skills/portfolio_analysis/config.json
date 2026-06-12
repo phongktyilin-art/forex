@@ -1,6 +1,6 @@
 {
-  "name": "portfolio-analysis",
-  "version": "0.1.0",
-  "description": "Portfolio analysis skill that calculates health, risk, exposure, and diversification metrics.",
-  "metrics": ["portfolio_health_score", "correlation_score", "diversification_score", "margin_usage", "total_exposure"]
+  "max_portfolio_risk": 3,
+  "max_symbol_risk": 1,
+  "max_correlation_score": 0.8,
+  "max_margin_usage": 50
 }

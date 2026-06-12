@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import Any, Dict, List
 
 from app.skills.portfolio_analysis.risk_matrix import assess_portfolio_risk
@@ -15,19 +16,47 @@ class PortfolioEngine:
     def total_value(self) -> float:
         return float(sum(h.get("value", 0) for h in self.holdings))
 
+    def _currency_pairs(self) -> Dict[str, List[str]]:
+        pairs: Dict[str, List[str]] = {}
+        for h in self.holdings:
+            sym = str(h.get("symbol", ""))
+            if len(sym) == 6 and sym.isalpha():
+                pairs[sym] = [sym[:3], sym[3:]]
+        return pairs
+
+    def _sector_for_symbol(self, symbol: str) -> str:
+        symbol = symbol.upper()
+        if symbol in ("XAUUSD", "XAGUSD", "XAUJPY", "XAGJPY"):
+            return "metals"
+        if any(key in symbol for key in ("NAS100", "SP500", "DOW", "FTSE", "DAX")):
+            return "indices"
+        if len(symbol) == 6 and symbol.isalpha():
+            return "forex"
+        if any(key in symbol for key in ("BTC", "ETH", "LTC", "XRP")):
+            return "crypto"
+        return "other"
+
     def exposure_analysis(self) -> Dict[str, Any]:
         total = self.total_value()
         exposures: Dict[str, float] = {}
+        currency_exposure: Dict[str, float] = defaultdict(float)
         for h in self.holdings:
-            sym = h.get("symbol", "UNKNOWN")
-            exposures[sym] = round(float(h.get("value", 0)) / total, 4) if total > 0 else 0.0
+            sym = str(h.get("symbol", "UNKNOWN"))
+            exposure = round(float(h.get("value", 0)) / total, 4) if total > 0 else 0.0
+            exposures[sym] = exposure
+            if len(sym) == 6 and sym.isalpha():
+                base, quote = sym[:3], sym[3:]
+                currency_exposure[base] += exposure
+                currency_exposure[quote] += exposure
 
         max_exposure = round(max(exposures.values()) if exposures else 0.0, 4)
         return {
             "total_value": total,
             "exposures": exposures,
+            "currency_exposure": dict(currency_exposure),
             "max_exposure": max_exposure,
             "exposure_score": max_exposure,
+            "margin_usage": self.margin_usage,
         }
 
     def diversification_analysis(self) -> Dict[str, Any]:
@@ -35,11 +64,26 @@ class PortfolioEngine:
         concentration = max(exposures.values()) if exposures else 0.0
         hhi = sum((v ** 2) for v in exposures.values()) if exposures else 0.0
         diversification_score = round(max(0.0, 1.0 - hhi), 4)
+        sector_exposure: Dict[str, float] = defaultdict(float)
+        symbol_overlap: Dict[str, float] = defaultdict(float)
+        for symbol, exposure in exposures.items():
+            sector = self._sector_for_symbol(symbol)
+            sector_exposure[sector] += exposure
+            if len(symbol) == 6 and symbol.isalpha():
+                symbol_overlap[symbol[:3]] += exposure
+                symbol_overlap[symbol[3:]] += exposure
+            else:
+                symbol_overlap[symbol] += exposure
+
+        sector_overlap = round(max(sector_exposure.values()) if sector_exposure else 0.0, 4)
+        symbol_overlap_score = round(max(symbol_overlap.values()) if symbol_overlap else 0.0, 4)
         return {
             "n_positions": len(exposures),
             "concentration": round(concentration, 4),
             "hhi": round(hhi, 4),
             "diversification_score": diversification_score,
+            "sector_overlap": sector_overlap,
+            "symbol_overlap": symbol_overlap_score,
         }
 
     def correlation_analysis(self) -> Dict[str, Any]:
@@ -69,7 +113,19 @@ class PortfolioEngine:
         abs_vals = triu.abs().values[np.triu_indices_from(triu.values, k=1)]
         correlation_score = float(round(float(abs_vals.mean()) if abs_vals.size else 0.0, 4))
         corr_dict = {col: corr[col].to_dict() for col in corr.columns}
-        return {"correlation_matrix": corr_dict, "correlation_score": correlation_score}
+        correlated_pairs = []
+        for i, row in corr.iterrows():
+            for j, value in row.items():
+                if i != j and abs(value) >= 0.75:
+                    pair = tuple(sorted((i, j)))
+                    if pair not in correlated_pairs:
+                        correlated_pairs.append(pair)
+        correlation_pairs = [f"{a} ↔ {b}" for a, b in correlated_pairs]
+        return {
+            "correlation_matrix": corr_dict,
+            "correlation_score": correlation_score,
+            "correlation_pairs": correlation_pairs,
+        }
 
     def concentration_analysis(self) -> Dict[str, Any]:
         exposures = self.exposure_analysis().get("exposures", {})
