@@ -210,10 +210,21 @@ def analyze_portfolio(portfolio: Dict[str, Any]) -> Dict[str, Any]:
     metrics["portfolio_health_score"] = int(metrics["portfolio_health_score"])
     risk_assessment = assess_portfolio_risk(metrics)
 
+    def concentration_risk_level(score: float) -> str:
+        if score < 0.25:
+            return "LOW"
+        if score < 0.5:
+            return "MEDIUM"
+        if score < 0.75:
+            return "HIGH"
+        return "CRITICAL"
+
     return {
         "health_score": metrics["portfolio_health_score"],
+        "risk_level": risk_assessment["risk_level"],
+        "exposure_score": int(round(metrics["exposure_score"] * 100)),
         "correlation_risk": engine.correlation_risk(metrics["correlation_score"]),
-        "exposure_risk": engine.exposure_risk(metrics["exposure_score"]),
+        "concentration_risk": concentration_risk_level(metrics["concentration_score"]),
         "warnings": engine.warnings(metrics),
         "metrics": metrics,
         "analysis": {

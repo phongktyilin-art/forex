@@ -17,7 +17,9 @@ def test_analyze_portfolio_with_prices():
     res = analyze_portfolio(portfolio)
     assert "health_score" in res
     assert "correlation_risk" in res
-    assert "exposure_risk" in res
+    assert "concentration_risk" in res
+    assert "exposure_score" in res
+    assert "risk_level" in res
     assert "warnings" in res
     assert "metrics" in res
     assert "analysis" in res
@@ -25,7 +27,9 @@ def test_analyze_portfolio_with_prices():
 
     assert 0 <= res["health_score"] <= 100
     assert res["correlation_risk"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
-    assert res["exposure_risk"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
+    assert res["concentration_risk"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
+    assert 0 <= res["exposure_score"] <= 100
+    assert res["risk_level"] in ("LOW", "MEDIUM", "HIGH", "CRITICAL")
     assert isinstance(res["warnings"], list)
 
     div_score = res["metrics"]["diversification_score"]
