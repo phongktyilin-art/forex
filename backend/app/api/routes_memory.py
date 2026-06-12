@@ -5,7 +5,10 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.core.runtime import memory_agent
+from fastapi import Depends
+
+from app.api.deps import get_memory_agent
+from app.memory import MemoryManager
 from memory.schemas import MemoryQuery, MemoryType
 
 router = APIRouter(prefix="/api/v1/memory", tags=["memory"])
@@ -37,7 +40,7 @@ class ShortTermMemoryRequest(BaseModel):
 
 
 @router.post("/save")
-def save_memory(record: MemorySaveRequest):
+def save_memory(record: MemorySaveRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     saved = memory_agent.remember(
         {"kind": record.kind, "content": record.content},
         memory_type=record.memory_type,
@@ -47,7 +50,7 @@ def save_memory(record: MemorySaveRequest):
 
 
 @router.post("/save-trade-context")
-def save_trade_context_endpoint(payload: TradeContextRequest):
+def save_trade_context_endpoint(payload: TradeContextRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     saved = memory_agent.save_trade_context(
         symbol=payload.symbol,
         timeframe=payload.timeframe,
@@ -58,7 +61,7 @@ def save_trade_context_endpoint(payload: TradeContextRequest):
 
 
 @router.post("/query")
-def query_memory(payload: MemoryQueryRequest):
+def query_memory(payload: MemoryQueryRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     results = memory_agent.query(
         payload.query,
         tags=payload.tags,
@@ -68,25 +71,25 @@ def query_memory(payload: MemoryQueryRequest):
 
 
 @router.get("/all")
-def get_all_memory():
+def get_all_memory(memory_agent: MemoryManager = Depends(get_memory_agent)):
     records = memory_agent.load_memory()
     return {"records": [record.to_dict() for record in records]}
 
 
 @router.post("/short-term/save")
-def save_short_term_memory(payload: ShortTermMemoryRequest):
+def save_short_term_memory(payload: ShortTermMemoryRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     record = memory_agent.save_short_term(payload.content, payload.tags)
     return {"saved_memory": record.to_dict()}
 
 
 @router.get("/short-term/recent")
-def recent_short_term_memory(limit: int = 10):
+def recent_short_term_memory(limit: int = 10, memory_agent: MemoryManager = Depends(get_memory_agent)):
     records = memory_agent.recent_short_term(limit)
     return {"recent_memories": [record.to_dict() for record in records]}
 
 
 @router.post("/market-insight")
-def query_market_insight_endpoint(payload: MemoryQueryRequest):
+def query_market_insight_endpoint(payload: MemoryQueryRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     results = memory_agent.query_market_insight(payload.query, payload.tags)
     return {"market_insights": [record.to_dict() for record in results]}
 
@@ -102,12 +105,12 @@ class FailureRequest(BaseModel):
 
 
 @router.post("/evidence")
-def save_evidence_endpoint(payload: EvidenceRequest):
+def save_evidence_endpoint(payload: EvidenceRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     saved = memory_agent.save_evidence(payload.content, payload.tags)
     return {"saved_memory": saved.to_dict()}
 
 
 @router.post("/failure")
-def save_failure_endpoint(payload: FailureRequest):
+def save_failure_endpoint(payload: FailureRequest, memory_agent: MemoryManager = Depends(get_memory_agent)):
     saved = memory_agent.save_failure(payload.content, payload.tags)
     return {"saved_memory": saved.to_dict()}
