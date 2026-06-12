@@ -12,14 +12,18 @@ class RiskLevel(str, Enum):
 
 
 def assess_portfolio_risk(metrics: Dict[str, Any]) -> Dict[str, Any]:
-    """Basic heuristic to assess portfolio risk from metrics.
+    """Heuristic risk assessment across portfolio dimensions."""
+    concentration = max(0.0, min(1.0, float(metrics.get("concentration_score", 0.0))))
+    correlation = max(0.0, min(1.0, float(metrics.get("correlation_score", 0.0))))
+    exposure = max(0.0, min(1.0, float(metrics.get("exposure_score", 0.0))))
+    margin = max(0.0, min(1.0, float(metrics.get("margin_usage", 0.0))))
+    drawdown = max(0.0, min(1.0, float(metrics.get("drawdown", 0.0))))
 
-    Expects metrics to contain `concentration_score` (0..1) and `margin_usage` (0..1) optionally.
-    """
-    concentration = float(metrics.get("concentration_score", 0))
-    margin = float(metrics.get("margin_usage", 0))
+    dimensions = [concentration, correlation, exposure, margin]
+    if drawdown > 0.0:
+        dimensions.append(drawdown)
 
-    score = concentration * 0.7 + margin * 0.3
+    score = sum(dimensions) / len(dimensions) if dimensions else 0.0
     if score < 0.25:
         level = RiskLevel.LOW
     elif score < 0.5:
@@ -29,4 +33,14 @@ def assess_portfolio_risk(metrics: Dict[str, Any]) -> Dict[str, Any]:
     else:
         level = RiskLevel.CRITICAL
 
-    return {"risk_level": level.value, "risk_score": round(score, 4)}
+    return {
+        "risk_level": level.value,
+        "risk_score": round(score, 4),
+        "dimensions": {
+            "exposure": exposure,
+            "concentration": concentration,
+            "correlation": correlation,
+            "margin_usage": margin,
+            "drawdown": drawdown,
+        },
+    }

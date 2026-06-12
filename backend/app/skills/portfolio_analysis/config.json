@@ -1,6 +1,6 @@
 {
   "name": "portfolio-analysis",
   "version": "0.1.0",
-  "description": "Stub portfolio analysis skill providing simple metrics for testing and integration",
-  "metrics": ["exposure_score", "correlation_score", "diversification_score", "margin_usage", "portfolio_health"]
+  "description": "Portfolio analysis skill that calculates health, risk, exposure, and diversification metrics.",
+  "metrics": ["portfolio_health_score", "correlation_score", "diversification_score", "margin_usage", "total_exposure"]
 }
