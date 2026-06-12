@@ -1,0 +1,13 @@
+{
+  "name": "skills.portfolio.exposure.calculate_exposure",
+  "description": "Calculate portfolio exposure relative to account balance.",
+  "category": "portfolio",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "positions", "data_type": "List[dict]", "required": true},
+    {"name": "account_balance", "data_type": "float", "required": true}
+  ],
+  "outputs": [
+    {"name": "exposure_pct", "data_type": "float"}
+  ]
+}

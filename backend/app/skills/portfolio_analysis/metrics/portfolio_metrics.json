@@ -1,0 +1,9 @@
+{
+  "metrics": [
+    {"name": "exposure_score", "type": "float", "description": "Fractional exposure per instrument / total capital (0..1)"},
+    {"name": "correlation_score", "type": "float", "description": "Average absolute pairwise correlation of holdings (0..1)"},
+    {"name": "diversification_score", "type": "float", "description": "Diversification metric defined as 1 - HHI (0..1)"},
+    {"name": "margin_usage", "type": "float", "description": "Margin usage fraction (0..1)"},
+    {"name": "portfolio_health", "type": "float", "description": "Composite health score derived from other metrics (0..1)"}
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "market_state": {
+    "symbol": "XAUUSD",
+    "setup": "breakout",
+    "regime": "Trending",
+    "session": "London"
+  },
+  "trade_result": {
+    "trade_id": "winner-example",
+    "direction": "buy",
+    "entry_price": 2310.5,
+    "exit_price": 2321.0,
+    "stop_loss": 2305.0,
+    "take_profit": 2321.0,
+    "lot_size": 0.1,
+    "result": "winner",
+    "evidence": [
+      {
+        "screenshots": [],
+        "indicators": {"ema": "bullish"},
+        "notes": ["breakout confirmed"],
+        "confidence": 0.82,
+        "metadata": {"source": "example"}
+      }
+    ],
+    "metadata": {"rr": 1.9}
+  }
+}

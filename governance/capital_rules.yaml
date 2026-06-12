@@ -1,0 +1,4 @@
+starting_balance: 10000
+max_lot_size: 1.0
+compounding_enabled: true
+capital_allocation: 100

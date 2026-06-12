@@ -1,0 +1,10 @@
+{
+  "name": "market-analysis",
+  "version": "0.1.0",
+  "author": "",
+  "description": "Analyze market structure, trend and volatility (Phase B skill).",
+  "interface": {
+    "input": "market_state",
+    "output": ["decision","confidence","evidence","metadata"]
+  }
+}

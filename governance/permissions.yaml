@@ -1,0 +1,4 @@
+allow_live_trading: false
+allow_news_trading: false
+allow_scalping: true
+allow_weekend_positions: false

@@ -1,0 +1,4 @@
+{
+  "input": {"strategy_payload": {"name": "mean_reversion", "params": {"threshold": 0.01}}},
+  "output": {"name": "mean_reversion", "params": {"threshold": 0.01}}
+}

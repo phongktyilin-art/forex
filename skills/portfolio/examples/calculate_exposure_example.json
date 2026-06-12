@@ -1,0 +1,4 @@
+{
+  "input": {"positions": [{"symbol": "EURUSD", "value": 10000.0}], "account_balance": 100000.0},
+  "output": 0.1
+}

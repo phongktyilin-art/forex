@@ -1,0 +1,13 @@
+{
+  "name": "skills.multi_timeframe.context.assemble_multi_timeframe_context",
+  "description": "Assemble market context across multiple timeframes for higher-level decision making.",
+  "category": "multi_timeframe",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "timeframes", "data_type": "List[str]", "required": true},
+    {"name": "data_by_timeframe", "data_type": "Dict[str, dict]", "required": true}
+  ],
+  "outputs": [
+    {"name": "context", "data_type": "dict"}
+  ]
+}

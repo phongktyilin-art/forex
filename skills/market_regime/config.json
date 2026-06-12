@@ -1,0 +1,13 @@
+{
+  "name": "skills.market_regime.regime_detection.detect_market_regime",
+  "description": "Detect the current market regime for regime-specific strategy selection.",
+  "category": "market_regime",
+  "version": "1.0.0",
+  "inputs": [
+    {"name": "prices", "data_type": "List[float]", "required": true},
+    {"name": "volume", "data_type": "List[float]", "required": true}
+  ],
+  "outputs": [
+    {"name": "regime", "data_type": "str"}
+  ]
+}

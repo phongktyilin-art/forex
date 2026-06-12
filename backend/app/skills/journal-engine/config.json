@@ -1,0 +1,13 @@
+{
+  "name": "journal-engine",
+  "version": "0.1.0",
+  "author": "TUNGNS Trading OS",
+  "description": "Evidence-first trade journal engine for Memory OS and Evolution OS.",
+  "interface": {
+    "input": ["market_state", "trade_result"],
+    "output": ["trade_id", "symbol", "setup", "regime", "session", "result", "evidence", "metadata"]
+  },
+  "hooks": ["before_trade", "after_trade", "before_close", "after_close"],
+  "memory": ["winners", "losers", "patterns", "strategies"],
+  "principles": ["Small Files", "Single Responsibility", "Evidence First", "Memory First", "Generate -> Verify -> Publish"]
+}

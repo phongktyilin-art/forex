@@ -1,0 +1,9 @@
+{
+  "tracked_metrics": [
+    "win_rate",
+    "average_rr",
+    "average_holding_time",
+    "profit_factor",
+    "expectancy"
+  ]
+}

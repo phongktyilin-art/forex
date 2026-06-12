@@ -1,0 +1,4 @@
+{
+  "input": {"timeframes": ["1h", "4h", "1d"], "data_by_timeframe": {"1h": {"price": 1.12}, "4h": {"price": 1.14}, "1d": {"price": 1.15}}},
+  "output": {"1h": {"price": 1.12}, "4h": {"price": 1.14}, "1d": {"price": 1.15}}
+}
