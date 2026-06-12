@@ -23,6 +23,7 @@ from app.api.routes_graph2 import router as graph_router
 from app.api.routes_robot import router as robot_router
 from app.api.routes_portfolio import router as portfolio_router
 from app.core.config import get_settings
+from app.core.runtime import memory_agent
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version="0.1.0")
@@ -46,6 +47,24 @@ app.include_router(identity_router)
 app.include_router(portfolio_router)
 app.include_router(dashboard_router)
 app.include_router(graph_router)
+
+# expose memory agent on app state for DI and runtime access
+app.state.memory_agent = memory_agent
+
+
+@app.on_event("startup")
+def _startup():
+    # ensure memory directories exist
+    try:
+        memory_agent._ensure_dirs()
+    except Exception:
+        pass
+
+
+@app.on_event("shutdown")
+def _shutdown():
+    # placeholder for future cleanup
+    return None
 
 
 @app.get("/health")
